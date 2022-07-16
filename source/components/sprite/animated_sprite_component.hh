@@ -14,11 +14,16 @@ namespace components
         class AnimatedSpriteComponent : public components::sprite::SpriteComponent
         {
         public:  // Public constructors, destructor and operators
-            AnimatedSpriteComponent(game_objects::wp_game_object_t owner, const components::sprite::sprite_draw_order_t draw_oder, const float anim_fps);
             AnimatedSpriteComponent(const AnimatedSpriteComponent& other) = delete;
             ~AnimatedSpriteComponent(void);
 
             AnimatedSpriteComponent& operator=(const AnimatedSpriteComponent& other) = delete;
+        
+        protected:  // Protected constructor
+            AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const components::sprite::sprite_draw_order_t draw_oder, const float anim_fps);
+
+        public:  // Public static members
+            [[nodiscard]] static components::sprite::sp_animated_sprite_t create(game_objects::sp_game_object_t owner, const components::sprite::sprite_draw_order_t draw_oder, const float anim_fps);
 
         private:  // Private attributes
             // All textures in the animation
@@ -33,16 +38,17 @@ namespace components
             // It alo allows the animation to dynamically speed up or slow down
             float anim_fps = 0.0f;
 
+        public:  // Public overridden methods
+            // Update animation every frame
+            void update(const float delta_time) override;
+
         public:  // Public methods
             [[nodiscard]] float get_anim_fps(void) const noexcept;
 
             void set_anim_fps(float anim_fps);
 
             // Set the textures usd for animation
-            void set_animation_textures(std::vector<SDL_Texture*> textures);
-
-            // Update animation every frame
-            void update(const float delta_time) override;
+            void set_animation_textures(std::vector<SDL_Texture*>&& textures);
         };
     }
 }

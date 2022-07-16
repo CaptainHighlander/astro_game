@@ -32,7 +32,7 @@ SDL_Renderer* Engine::get_sdl_renderer_ptr(void) const noexcept
 bool Engine::initialize(void)
 {
     // SDL library initialization
-    const int sdl_result = SDL_Init(SDL_INIT_VIDEO);
+    const int sdl_result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     if (sdl_result != 0)
     {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
@@ -96,6 +96,7 @@ void Engine::run_loop(void)
 void Engine::shutdown(void)
 {
     this->b_is_running = false;
+    IMG_Quit();
     if (this->window != nullptr)
         SDL_DestroyWindow(this->window);
     if (this->renderer != nullptr)
@@ -108,7 +109,7 @@ void Engine::shutdown(void)
 #pragma region Private methods:
 void Engine::generate_outputs(void)
 {
-    // Clear back color-buffer to a color (the Engine's current color-buffer)
+    // Clear back color-buffer to a color (the engine's current color-buffer)
     SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
     SDL_RenderClear(this->renderer);
 

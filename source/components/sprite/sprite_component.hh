@@ -2,6 +2,7 @@
 
 
 #include <components/component.hh>
+#include <components/sprite/sprite_typedef.hpp>
 
 #include <SDL2/SDL_image.h>
 

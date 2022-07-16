@@ -23,20 +23,20 @@ namespace game_objects
             E_TO_ERASE,
         };
 
-    public:  // Constructors, destructor and operators
+    public:  // Public constructors, destructor and operators
         GameObject(const GameObject& other) = delete;
         virtual ~GameObject(void);
 
         GameObject& operator=(const GameObject& other) = delete;
 
-    private:  // Constructors
+    public:  // Protected static attributes
+        static uint32_t next_id;
+
+    protected:  // Protected constructors
         explicit GameObject(const environments::Game& game);
 
     public:  // Public static methods
         [[nodiscard]] static sp_game_object_t create(const environments::Game& game);
-
-    public:  // Public static attributes
-        static uint32_t next_id;
 
     private:  // Private attributes
         const environments::Game& game_cref;
