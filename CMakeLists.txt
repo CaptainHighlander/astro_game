@@ -12,7 +12,6 @@ set(SDL2_LIBRARY C:/SDL2/bin)
 include_directories(
 	"source"
     ${SDL2_INCLUDE_DIR}
-    ${PROJECT_SOURCE_DIR}/include
 )
 
 link_directories(
@@ -20,8 +19,17 @@ link_directories(
 )
 
 # INCLUDE FILES THAT SHOULD BE COMPILED:
-file(GLOB_RECURSE SRC "source/*.cpp" "source/*.h")
-add_executable(${PROJECT_NAME} ${SRC})
+file(GLOB_RECURSE SRC 
+	"source/*.cpp" 
+	"source/*.hh"
+	"source/*.hpp" 
+	
+	"source/*.c" 
+	"source/*.h"
+)
+add_executable(${PROJECT_NAME} 
+	${SRC}
+)
 
 # Use C++20
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
