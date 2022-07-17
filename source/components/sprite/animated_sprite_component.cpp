@@ -1,24 +1,24 @@
 #include "animated_sprite_component.hh"
-using namespace components::sprite;
+namespace ns = components::sprite;
 
 
 #pragma region Constructors, destructor and operators
-AnimatedSpriteComponent::AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const components::sprite::draw_order_t draw_oder, const float _anim_fps) :
-    SpriteComponent(std::move(owner), draw_oder), anim_fps(_anim_fps)
+ns::AnimatedSpriteComponent::AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const ns::draw_order_t draw_oder, const float _anim_fps) :
+    ns::SpriteComponent(std::move(owner), draw_oder), anim_fps(_anim_fps)
 {
 }
 
-AnimatedSpriteComponent::~AnimatedSpriteComponent(void)
+ns::AnimatedSpriteComponent::~AnimatedSpriteComponent(void)
 {
 }
 #pragma endregion
 
 
 #pragma region Public static methods
-components::sprite::sp_animated_sprite_t AnimatedSpriteComponent::create(game_objects::sp_game_object_t owner, const components::sprite::draw_order_t draw_oder, const float anim_fps)
+ns::sp_animated_sprite_t ns::AnimatedSpriteComponent::create(game_objects::sp_game_object_t owner, const ns::draw_order_t draw_oder, const float anim_fps)
 {
-	components::sprite::sp_animated_sprite_t asc{ 
-		new AnimatedSpriteComponent { std::move(owner), draw_oder, anim_fps} 
+	ns::sp_animated_sprite_t asc{ 
+		new ns::AnimatedSpriteComponent { std::move(owner), draw_oder, anim_fps} 
 	};
 	return asc;
 }
@@ -26,9 +26,9 @@ components::sprite::sp_animated_sprite_t AnimatedSpriteComponent::create(game_ob
 
 
 #pragma region Public overridden methods
-void AnimatedSpriteComponent::update(const float delta_time)
+void ns::AnimatedSpriteComponent::update(const float delta_time)
 {
-	this->SpriteComponent::update(delta_time);
+	this->ns::SpriteComponent::update(delta_time);
 
 	if (this->anim_textures.empty() == false)
 	{
@@ -42,25 +42,25 @@ void AnimatedSpriteComponent::update(const float delta_time)
 		}
 
 		// Set the current texture
-		this->SpriteComponent::set_texture(this->anim_textures[static_cast<size_t>(this->current_frame)]);
+		this->ns::SpriteComponent::set_texture(this->anim_textures[static_cast<size_t>(this->current_frame)]);
 	}
 }
 #pragma endregion
 
 
 #pragma region Public methods:
-float AnimatedSpriteComponent::get_anim_fps(void) const noexcept
+float ns::AnimatedSpriteComponent::get_anim_fps(void) const noexcept
 {
     return this->anim_fps;
 }
 
-void AnimatedSpriteComponent::set_anim_fps(float _anim_fps)
+void ns::AnimatedSpriteComponent::set_anim_fps(float _anim_fps)
 {
     this->anim_fps = _anim_fps;
 }
 
 // Set the textures usd for animation
-void AnimatedSpriteComponent::set_animation_textures(std::vector<textures::sp_texture_t> textures)
+void ns::AnimatedSpriteComponent::set_animation_textures(std::vector<textures::sp_texture_t> textures)
 {
     this->anim_textures = std::move(textures);
     this->current_frame = 0.0f;

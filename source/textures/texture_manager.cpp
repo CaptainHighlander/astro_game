@@ -1,5 +1,5 @@
 #include "texture_manager.hh"
-using namespace textures;
+namespace ns = textures;
 
 
 #include <engine.hh>
@@ -10,58 +10,60 @@ using namespace textures;
 
 
 #pragma region Public static attributes initialization
-std::unique_ptr<textures::TextureManager> TextureManager::sprite_manager;
+std::unique_ptr<ns::TextureManager> ns::TextureManager::sprite_manager;
 #pragma endregion
 
 
 #pragma region Constructors and detructor:
-TextureManager::TextureManager(std::shared_ptr<Engine>&& _engine) :
+ns::TextureManager::TextureManager(std::shared_ptr<Engine>&& _engine) :
     engine(std::move(_engine))
 {
 }
 
-TextureManager::~TextureManager(void)
+ns::TextureManager::~TextureManager(void)
 {
 }
 #pragma endregion
 
 
 #pragma region Public static methods
-bool TextureManager::init(std::shared_ptr<Engine> engine)
+bool ns::TextureManager::init(std::shared_ptr<Engine> engine)
 {
     bool result = false;
-    if (!TextureManager::sprite_manager)
+    if (!ns::TextureManager::sprite_manager)
     {
-        TextureManager::sprite_manager = std::unique_ptr<TextureManager>{ new TextureManager{ std::move(engine) } };
+        ns::TextureManager::sprite_manager = std::unique_ptr<ns::TextureManager>{
+            new ns::TextureManager{ std::move(engine) } 
+        };
         result = true;
     }
     return result;
 }
 
-textures::sp_texture_t TextureManager::load_texture(const std::string& file_name)
+ns::sp_texture_t ns::TextureManager::load_texture(const std::string& file_name)
 {
-    return TextureManager::sprite_manager->load_texture_int(file_name);
+    return ns::TextureManager::sprite_manager->load_texture_int(file_name);
 }
 
-textures::sp_texture_t TextureManager::load_texture(std::string&& file_name)
+ns::sp_texture_t ns::TextureManager::load_texture(std::string&& file_name)
 {
-    return TextureManager::load_texture(file_name);
+    return ns::TextureManager::load_texture(file_name);
 }
 #pragma endregion
 
 
 #pragma region Private static methods
-void TextureManager::remove_texture(const std::string& file_name)
+void ns::TextureManager::remove_texture(const std::string& file_name)
 {
-    TextureManager::sprite_manager->remove_texture_int(file_name);
+    ns::TextureManager::sprite_manager->remove_texture_int(file_name);
 }
 #pragma endregion
 
 
 #pragma region Private methods:
-textures::sp_texture_t TextureManager::load_texture_int(const std::string& file_name)
+ns::sp_texture_t ns::TextureManager::load_texture_int(const std::string& file_name)
 {
-    textures::sp_texture_t texture;
+    ns::sp_texture_t texture;
 
     SDL_Texture* sld_texture = nullptr;
     std::string_view key_texture;
@@ -100,13 +102,13 @@ textures::sp_texture_t TextureManager::load_texture_int(const std::string& file_
 
     if (sld_texture != nullptr)
     {
-        texture = sp_texture_t{ new Texture { sld_texture, key_texture } };
+        texture = ns::sp_texture_t{ new ns::Texture { sld_texture, key_texture } };
     }
 
     return texture;
 }
 
-void TextureManager::remove_texture_int(const std::string& file_name)
+void ns::TextureManager::remove_texture_int(const std::string& file_name)
 {
     auto& texture_info = this->textures_map.at(file_name);
     auto& count = texture_info.first;

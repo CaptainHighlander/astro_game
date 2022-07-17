@@ -1,5 +1,5 @@
 #include "sprite_component.hh"
-using namespace components::sprite;
+namespace ns = components::sprite;
 
 
 #include <game_objects/game_object.hh>
@@ -10,19 +10,19 @@ using namespace components::sprite;
 
 
 #pragma region Constructors, destructor and operators
-SpriteComponent::SpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::draw_order_t _draw_order) :
-    Component(std::move(owner)), draw_order(_draw_order)
+ns::SpriteComponent::SpriteComponent(game_objects::wp_game_object_t&& owner, const ns::draw_order_t _draw_order) :
+    components::Component(std::move(owner)), draw_order(_draw_order)
 {
 }
 
-SpriteComponent::~SpriteComponent(void)
+ns::SpriteComponent::~SpriteComponent(void)
 {
 }
 #pragma endregion
 
 
 #pragma region Public methods
-void SpriteComponent::draw(SDL_Renderer* renderer)
+void ns::SpriteComponent::draw(SDL_Renderer* renderer)
 {
     if (this->texture != nullptr)
     {
@@ -53,22 +53,22 @@ void SpriteComponent::draw(SDL_Renderer* renderer)
     }
 }
 
-void SpriteComponent::set_texture(textures::sp_texture_t _texture)
+void ns::SpriteComponent::set_texture(textures::sp_texture_t _texture)
 {
     this->texture = std::move(_texture);
 }
 
-components::sprite::draw_order_t SpriteComponent::get_draw_order(void) const noexcept
+ns::draw_order_t ns::SpriteComponent::get_draw_order(void) const noexcept
 {
     return this->draw_order;
 }
 
-components::sprite::height_t SpriteComponent::get_height(void) const noexcept
+ns::height_t ns::SpriteComponent::get_height(void) const noexcept
 {
     return (this->texture) ?this->texture->get_height() : 0;
 }
 
-components::sprite::width_t SpriteComponent::get_width(void) const noexcept
+ns::width_t ns::SpriteComponent::get_width(void) const noexcept
 {
     return (this->texture) ?this->texture->get_width() : 0;
 }

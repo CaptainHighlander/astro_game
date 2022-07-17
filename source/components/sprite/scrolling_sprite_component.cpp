@@ -1,24 +1,24 @@
 #include "scrolling_sprite_component.hh"
-using namespace components::sprite;
+namespace ns = components::sprite;
 
 #include <game_objects/game_object.hh>
 #include <textures/texture.hh>
 
 
 #pragma region Constructors, destructor and operators
-ScrollingSpriteComponent::ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::draw_order_t _draw_order) :
-    SpriteComponent(std::move(owner), _draw_order)
+ns::ScrollingSpriteComponent::ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const ns::draw_order_t _draw_order) :
+    ns::SpriteComponent(std::move(owner), _draw_order)
 {
 }
 
-ScrollingSpriteComponent::~ScrollingSpriteComponent(void)
+ns::ScrollingSpriteComponent::~ScrollingSpriteComponent(void)
 {
 }
 #pragma endregion
 
 
 #pragma region Public overridden methods:
-void ScrollingSpriteComponent::draw(SDL_Renderer* renderer)
+void ns::ScrollingSpriteComponent::draw(SDL_Renderer* renderer)
 {
     // Draw each background texture
     auto owner = this->owner.lock();
@@ -41,7 +41,7 @@ void ScrollingSpriteComponent::draw(SDL_Renderer* renderer)
 	}
 }
 
-void ScrollingSpriteComponent::update(const float delta_time)
+void ns::ScrollingSpriteComponent::update(const float delta_time)
 {
     this->SpriteComponent::update(delta_time);
 
@@ -58,22 +58,22 @@ void ScrollingSpriteComponent::update(const float delta_time)
 
 
 #pragma region Public methods
-float ScrollingSpriteComponent::get_scrool_speed(void) const noexcept
+float ns::ScrollingSpriteComponent::get_scrool_speed(void) const noexcept
 {
     return this->scroll_speed;
 }
 
-void ScrollingSpriteComponent::set_screen_size(const Vector2& size)
+void ns::ScrollingSpriteComponent::set_screen_size(const Vector2& size)
 {
     this->screen_size = size;
 }
 
-void ScrollingSpriteComponent::set_scrool_speed(const float speed)
+void ns::ScrollingSpriteComponent::set_scrool_speed(const float speed)
 {
     this->scroll_speed = speed;
 }
 
-void ScrollingSpriteComponent::set_textures(const std::vector<textures::sp_texture_t>& textures)
+void ns::ScrollingSpriteComponent::set_textures(const std::vector<textures::sp_texture_t>& textures)
 {
     // This cose assumes that each image has a width corresponding to the screen width, 
     // but i's certainly possible to modify the code to account for variable sizes
