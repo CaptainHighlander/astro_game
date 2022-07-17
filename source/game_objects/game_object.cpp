@@ -126,7 +126,7 @@ void ns::GameObject::update_components(const float delta_time)
     for (auto const& component : this->components)
         component->update(delta_time);
 }
-#include <iostream>
+
 void ns::GameObject::update_game_object(const float delta_time)
 {
     // Nothing to do
