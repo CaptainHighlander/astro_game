@@ -2,10 +2,11 @@
 using namespace components::sprite;
 
 #include <game_objects/game_object.hh>
+#include <textures/texture.hh>
 
 
 #pragma region Constructors, destructor and operators
-ScrollingSpriteComponent::ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::sprite_draw_order_t _draw_order) :
+ScrollingSpriteComponent::ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::draw_order_t _draw_order) :
     SpriteComponent(std::move(owner), _draw_order)
 {
 }
@@ -33,8 +34,10 @@ void ScrollingSpriteComponent::draw(SDL_Renderer* renderer)
 		r.x = static_cast<int>(owner->get_position().x - r.w / 2 + scrolling_texture.offset.x);
 		r.y = static_cast<int>(owner->get_position().y - r.h / 2 + scrolling_texture.offset.y);
 
+        const auto& sdl_texture = scrolling_texture.texture->get_sdl_texture_cref();
+
 		// Draw this background
-		SDL_RenderCopy(renderer, scrolling_texture.texture, nullptr, &r);
+		SDL_RenderCopy(renderer, &const_cast<SDL_Texture&>(sdl_texture), nullptr, &r);
 	}
 }
 
@@ -70,19 +73,19 @@ void ScrollingSpriteComponent::set_scrool_speed(const float speed)
     this->scroll_speed = speed;
 }
 
-void ScrollingSpriteComponent::set_textures(const std::vector<SDL_Texture*>& textures)
+void ScrollingSpriteComponent::set_textures(const std::vector<textures::sp_texture_t>& textures)
 {
     // This cose assumes that each image has a width corresponding to the screen width, 
     // but i's certainly possible to modify the code to account for variable sizes
     uint32_t count = 0;
-    for (auto const& tex : textures)
+    for (auto tex : textures)
     {
-        ScrollingTexture temp;
-        temp.texture = tex;
+        textures::ScrollingTexture temp;
+        temp.texture = std::move(tex);
         // Each texture is screen width in offset
         temp.offset.x = count * this->screen_size.x;
         temp.offset.y = 0;
-        this->scrolling_textures.push_back(temp);
+        this->scrolling_textures.push_back(std::move(temp));
         count += 1;
     }
 }

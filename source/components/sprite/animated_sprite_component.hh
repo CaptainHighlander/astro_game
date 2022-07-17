@@ -2,6 +2,7 @@
 
 
 #include <components/sprite/sprite_component.hh>
+#include <textures/textures_typedef.hpp>
 
 
 #include <vector>
@@ -20,14 +21,14 @@ namespace components
             AnimatedSpriteComponent& operator=(const AnimatedSpriteComponent& other) = delete;
         
         protected:  // Protected constructor
-            AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const components::sprite::sprite_draw_order_t draw_oder, const float anim_fps);
+            AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const components::sprite::draw_order_t draw_oder, const float anim_fps);
 
         public:  // Public static members
-            [[nodiscard]] static components::sprite::sp_animated_sprite_t create(game_objects::sp_game_object_t owner, const components::sprite::sprite_draw_order_t draw_oder, const float anim_fps);
+            [[nodiscard]] static components::sprite::sp_animated_sprite_t create(game_objects::sp_game_object_t owner, const components::sprite::draw_order_t draw_oder, const float anim_fps);
 
         private:  // Private attributes
             // All textures in the animation
-            std::vector<SDL_Texture*> anim_textures;
+            std::vector<textures::sp_texture_t> anim_textures;
 
             // Current frame displayed.
             // Allow you to also keep track of how log that frame has displayed
@@ -35,7 +36,7 @@ namespace components
 
             // Animation frame rate.
             // Allow different animated prites to run at different frame rates.
-            // It alo allows the animation to dynamically speed up or slow down
+            // It also allows the animation to dynamically speed up or slow down
             float anim_fps = 0.0f;
 
         public:  // Public overridden methods
@@ -47,8 +48,8 @@ namespace components
 
             void set_anim_fps(float anim_fps);
 
-            // Set the textures usd for animation
-            void set_animation_textures(std::vector<SDL_Texture*>&& textures);
+            // Set the textures used for animation
+            void set_animation_textures(std::vector<textures::sp_texture_t> textures);
         };
     }
 }

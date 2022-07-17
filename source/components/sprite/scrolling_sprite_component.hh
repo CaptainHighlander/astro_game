@@ -2,6 +2,10 @@
 
 
 #include <components/sprite/sprite_component.hh>
+
+#include <textures/scrolling_texture.hh>
+#include <textures/textures_typedef.hpp>
+
 #include <vector2.hpp>
 
 #include <SDL2/SDL_image.h>
@@ -21,17 +25,10 @@ namespace components
             ScrollingSpriteComponent& operator=(const ScrollingSpriteComponent& other) = delete;
 
         protected:  // Protected constructors
-            ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::sprite_draw_order_t _draw_order = 10);
+            ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::draw_order_t _draw_order = 10);
 
         private:  // Private attributes
-            // Struct to encapsulate each scrolling image and its offset
-            struct ScrollingTexture
-            {
-                SDL_Texture* texture = nullptr;
-                Vector2 offset;
-            };
-
-            std::vector<ScrollingTexture> scrolling_textures;
+            std::vector<textures::ScrollingTexture> scrolling_textures;
             Vector2 screen_size;
             float scroll_speed = 0;
 
@@ -48,7 +45,7 @@ namespace components
             void set_scrool_speed(const float speed);
 
             // Set the textures used for background
-            void set_textures(const std::vector<SDL_Texture*>& textures);
+            void set_textures(const std::vector<textures::sp_texture_t>& textures);
         };
     }
 }

@@ -27,6 +27,22 @@ namespace textures
 
     private:  // Private attributes
         SDL_Texture* sld_texture = nullptr;
+
+        // Constant reference to texture name
         std::string_view texture_name;
+
+        // Width of texture
+        textures::width_t width = 0;
+
+        // Height of texture
+        textures::height_t height = 0;
+    
+    public:  // Public methods
+
+        [[nodiscard]] textures::height_t get_height(void) const noexcept;
+
+        [[nodiscard]] const SDL_Texture& get_sdl_texture_cref(void) const noexcept;
+
+        [[nodiscard]] textures::width_t get_width(void) const noexcept;
     };
 }
