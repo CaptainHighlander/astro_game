@@ -57,6 +57,11 @@ else ()
 endif()
 
 # Copy dependencies
+file(
+    COPY assets
+    DESTINATION ${OUTPUT_DIR}
+)
+
 file(GLOB PROJECT_DEPENDENCIES ${SDL2_LIBRARY}/*.dll)
 foreach(Dependency IN LISTS PROJECT_DEPENDENCIES)
     file(
