@@ -6,8 +6,8 @@
 #include <SDL2/SDL_image.h>
 
 
-const uint16_t SCREEN_WIDTH = 1280;
-const uint16_t SCREEN_HEIGHT = 640;
+const uint16_t SCREEN_WIDTH = 1024;
+const uint16_t SCREEN_HEIGHT = 768;
 
 
 #pragma region Constructors, destructor and operators:
@@ -75,7 +75,7 @@ bool Engine::initialize(void)
     }
 
     // Create environment
-    this->current_environment = environments::sp_environment_t{ new environments::Game{ } };
+    this->current_environment = environments::sp_environment_t{ new environments::Game{ *this } };
 
     // Engine loop can be runned
     this->b_is_running = true;
@@ -87,9 +87,21 @@ void Engine::run_loop(void)
 {
     while (this->b_is_running == true)
     {
-        this->process_inputs();
-        this->update();
-        this->generate_outputs();
+        if (this->ticks_count != 0)
+        {
+            // Generate output: Swap front color-buffer and back color-buffer
+            SDL_RenderPresent(this->renderer);
+
+            // Frame limiting to 60 FPS: wait until 16 ms has elapsed since last frame
+            while (SDL_TICKS_PASSED(SDL_GetTicks(), this->ticks_count + 16) == false)
+                ;  // Wait
+        }
+        // Clear back color-buffer to a color (the engine's current color-buffer)
+        SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
+        SDL_RenderClear(this->renderer);
+
+        const auto* keyboard_state = this->process_inputs();
+        this->update(keyboard_state);
     }
 }
 
@@ -107,19 +119,7 @@ void Engine::shutdown(void)
 
 
 #pragma region Private methods:
-void Engine::generate_outputs(void)
-{
-    // Clear back color-buffer to a color (the engine's current color-buffer)
-    SDL_SetRenderDrawColor(this->renderer, 0, 0, 255, SDL_ALPHA_OPAQUE);
-    SDL_RenderClear(this->renderer);
-
-    // Draw the entire Engine scene
-
-    // Swap front color-buffer and back color-buffer
-    SDL_RenderPresent(this->renderer);
-}
-
-void Engine::process_inputs(void)
+const Uint8* Engine::process_inputs(void)
 {
     // Pooling events on the WINDOW and handling some of them
     SDL_Event sdl_event;
@@ -140,14 +140,12 @@ void Engine::process_inputs(void)
     // Window
     if (keyboard_state[SDL_SCANCODE_ESCAPE] == 1)
         this->b_is_running = false;  // Close window
+
+    return keyboard_state;
 }
 
-void Engine::update(void)
+void Engine::update(const uint8_t* keyboard_state)
 {
-    // Frame limiting to 60 FPS: wait until 16 ms has elapsed since last frame
-    while (SDL_TICKS_PASSED(SDL_GetTicks(), this->ticks_count + 16) == false)
-        ;
-
     // Get delta time (in seconds)
     float delta_time = static_cast<float>((SDL_GetTicks() - this->ticks_count)) / 1000.0f;
     this->ticks_count = SDL_GetTicks();
@@ -157,6 +155,6 @@ void Engine::update(void)
         delta_time = 0.05f;
 
     // Update
-    this->current_environment->update(delta_time);
+    this->current_environment->run(keyboard_state, delta_time, *this->renderer);
 }
 #pragma endregion

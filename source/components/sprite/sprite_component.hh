@@ -31,7 +31,7 @@ namespace components
             components::sprite::draw_order_t draw_order = 100;
 
         public:  // Public methods
-            virtual void draw(SDL_Renderer* renderer);
+            virtual void draw(SDL_Renderer& renderer);
 
             virtual void set_texture(textures::sp_texture_t texture);
 

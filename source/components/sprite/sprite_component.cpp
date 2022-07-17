@@ -22,7 +22,7 @@ ns::SpriteComponent::~SpriteComponent(void)
 
 
 #pragma region Public methods
-void ns::SpriteComponent::draw(SDL_Renderer* renderer)
+void ns::SpriteComponent::draw(SDL_Renderer& renderer)
 {
     if (this->texture != nullptr)
     {
@@ -42,7 +42,7 @@ void ns::SpriteComponent::draw(SDL_Renderer* renderer)
 
         // Draw
         SDL_RenderCopyEx(
-            renderer,  // Render target to draw
+            &renderer,  // Render target to draw
             &const_cast<SDL_Texture&>(sdl_texture),  // Texture to draw
             nullptr,  // Part of texture to draw (nullptr if whole)
             &rect,  // Rectangle to draw onto the target

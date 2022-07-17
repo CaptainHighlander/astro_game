@@ -17,27 +17,41 @@ ns::ScrollingSpriteComponent::~ScrollingSpriteComponent(void)
 #pragma endregion
 
 
+#pragma region Public static methods
+ns::sp_scrolling_sprite_t ns::ScrollingSpriteComponent::create(game_objects::sp_game_object_t owner, const ns::draw_order_t draw_oder)
+{
+	ns::sp_scrolling_sprite_t bg{ 
+		new ns::ScrollingSpriteComponent { std::move(owner), draw_oder} 
+	};
+	return bg;
+}
+#pragma endregion
+
+
 #pragma region Public overridden methods:
-void ns::ScrollingSpriteComponent::draw(SDL_Renderer* renderer)
+void ns::ScrollingSpriteComponent::draw(SDL_Renderer& renderer)
 {
     // Draw each background texture
     auto owner = this->owner.lock();
 	for (auto& scrolling_texture : this->scrolling_textures)
 	{
-		SDL_Rect r;
-        
-		// Assume screen size dimensions
-		r.w = static_cast<int>(this->screen_size.x);
-		r.h = static_cast<int>(this->screen_size.y);
+        if (scrolling_texture.texture)
+        {
+            SDL_Rect r;
+            
+            // Assume screen size dimensions
+            r.w = static_cast<int>(this->screen_size.x);
+            r.h = static_cast<int>(this->screen_size.y);
 
-		// Center the rectangle around the position of the owner
-		r.x = static_cast<int>(owner->get_position().x - r.w / 2 + scrolling_texture.offset.x);
-		r.y = static_cast<int>(owner->get_position().y - r.h / 2 + scrolling_texture.offset.y);
+            // Center the rectangle around the position of the owner
+            r.x = static_cast<int>(owner->get_position().x - r.w / 2 + scrolling_texture.offset.x);
+            r.y = static_cast<int>(owner->get_position().y - r.h / 2 + scrolling_texture.offset.y);
 
-        const auto& sdl_texture = scrolling_texture.texture->get_sdl_texture_cref();
+            const auto& sdl_texture = scrolling_texture.texture->get_sdl_texture_cref();
 
-		// Draw this background
-		SDL_RenderCopy(renderer, &const_cast<SDL_Texture&>(sdl_texture), nullptr, &r);
+            // Draw this background
+            SDL_RenderCopy(&renderer, &const_cast<SDL_Texture&>(sdl_texture), nullptr, &r);
+        }
 	}
 }
 

@@ -38,7 +38,6 @@ public:  // Public methods
     void shutdown(void);
 
 private:  // Private methods:
-    void generate_outputs(void);
-    void process_inputs(void);
-    void update(void);
+    [[nodiscard]] const uint8_t* process_inputs(void);
+    void update(const uint8_t* keyboard_state);
 };

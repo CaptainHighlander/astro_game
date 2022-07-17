@@ -1,14 +1,12 @@
 #include "ship.hh"
 namespace ns = game_objects;
 
-
-#include <components/sprite/animated_sprite_component.hh>
-#include <textures/texture_manager.hh>
+#include <SDL2/SDL_keyboard.h>
 
 
 #pragma region Constructors, destructor and operators:
-ns::Ship::Ship(const environments::Game& game) :
-    ns::GameObject(game)
+ns::Ship::Ship(const environments::Game& game, std::string_view class_name) :
+    ns::GameObject(game, std::move(class_name))
 {
 }
 
@@ -18,19 +16,56 @@ ns::Ship::~Ship(void)
 #pragma endregion
 
 
-#pragma region Public static methods
-ns::sp_ship_t ns::Ship::create(const environments::Game& game)
-{
-    ns::sp_ship_t new_ship{ new ns::Ship{ game } };
-    auto asc = components::sprite::AnimatedSpriteComponent::create(new_ship->shared_from_this(), 100, 24);
-    return new_ship;
-}
-#pragma endregion
-
-
 #pragma region Public overridden methods
-void ns::Ship::update_actor(const float delta_time)
+void ns::Ship::handle_keyboard_inputs(const uint8_t* keyboard_state)
 {
+    this->ns::GameObject::handle_keyboard_inputs(keyboard_state);
+
+	this->right_speed = 0.0f;
+	this->down_speed = 0.0f;
+	// right/left
+	if (keyboard_state[SDL_SCANCODE_D] == 1)
+	{
+		this->right_speed += 250.0f;
+	}
+	if (keyboard_state[SDL_SCANCODE_A] == 1)
+	{
+		this->right_speed -= 250.0f;
+	}
+	// up/down
+	if (keyboard_state[SDL_SCANCODE_S] == 1)
+	{
+		this->down_speed += 300.0f;
+	}
+	if (keyboard_state[SDL_SCANCODE_W] == 1)
+	{
+		this->down_speed -= 300.0f;
+	}
+}
+
+void ns::Ship::update_game_object(const float delta_time)
+{
+    this->ns::GameObject::update_game_object(delta_time);
+
+    this->position.x += this->right_speed * delta_time;
+    this->position.y += this->down_speed * delta_time;
+    // Restrict position to left half of screen
+	if (this->position.x < 25.0f)
+	{
+		this->position.x = 25.0f;
+	}
+	else if (this->position.x > 500.0f)
+	{
+		this->position.x = 500.0f;
+	}
+	if (this->position.y < 25.0f)
+	{
+		this->position.y = 25.0f;
+	}
+	else if (this->position.y > 743.0f)
+	{
+		this->position.y = 743.0f;
+	}
 }
 #pragma endregion
 
@@ -44,9 +79,5 @@ ns::speed_t ns::Ship::get_down_speed(void) const noexcept
 ns::speed_t ns::Ship::get_right_speed(void) const noexcept
 {
     return this->right_speed;
-}
-
-void ns::Ship::process_keyboard(const uint8_t* state)
-{
 }
 #pragma endregion

@@ -25,21 +25,23 @@ namespace textures
         ~TextureManager(void);
 
     private:  // Private constructors
-        explicit TextureManager(std::shared_ptr<Engine>&& _engine);
+        explicit TextureManager(const Engine& engine);
 
     private:  // Private static attributes
-        static std::unique_ptr<textures::TextureManager> sprite_manager;
+        static std::unique_ptr<textures::TextureManager> texture_manager;
 
     public:  // Public static methods
-        [[nodiscard]] static bool init(std::shared_ptr<Engine> engine);
+        static bool init(const Engine& engine);
         [[nodiscard]] static textures::sp_texture_t load_texture(const std::string& file_name);
         [[nodiscard]] static textures::sp_texture_t load_texture(std::string&& file_name);
+
+        static bool reset(void);
 
     private:  // Private static methods
         static void remove_texture(const std::string& file_name);
 
     private:  // Private attributes
-        std::shared_ptr<Engine> engine;
+        const Engine& engine;
         std::unordered_map<std::string, std::pair<uint32_t, SDL_Texture*>> textures_map;
 
     private:  // Private methods

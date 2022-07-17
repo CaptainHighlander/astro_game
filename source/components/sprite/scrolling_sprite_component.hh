@@ -27,13 +27,16 @@ namespace components
         protected:  // Protected constructors
             ScrollingSpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::draw_order_t _draw_order = 10);
 
+        public:  // Public static members
+            [[nodiscard]] static components::sprite::sp_scrolling_sprite_t create(game_objects::sp_game_object_t owner, const components::sprite::draw_order_t draw_oder);
+
         private:  // Private attributes
             std::vector<textures::ScrollingTexture> scrolling_textures;
             Vector2 screen_size;
             float scroll_speed = 0;
 
         public:  // Public override methods
-            void draw(SDL_Renderer* renderer) override;
+            void draw(SDL_Renderer& renderer) override;
 
             void update(const float delta_time) override;
 

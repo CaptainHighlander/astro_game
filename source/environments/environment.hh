@@ -1,6 +1,11 @@
 #pragma once
 
 
+#include <main_types.hpp>
+
+#include <SDL2/SDL_render.h>
+
+
 namespace environments
 {
     class Environment
@@ -12,9 +17,9 @@ namespace environments
         Environment& operator=(const Environment& other) = delete;
 
     protected:  // Protected constructors and operators
-        Environment(void);
+        explicit Environment(const Engine& engine);
 
-    public:  // Public methods:
-        virtual void update(const float delta_time) = 0;
+    public:  // Public methods
+        virtual void run(const uint8_t* keyboard_state, const float delta_time, SDL_Renderer& renderer) = 0;
     };
 }
