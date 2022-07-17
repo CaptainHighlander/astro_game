@@ -16,7 +16,7 @@ ns::ScrollingTexture::ScrollingTexture(const ns::ScrollingTexture& other):
 
 ns::ScrollingTexture::ScrollingTexture(ns::ScrollingTexture&& other) noexcept
 {
-    swap(*this, other);
+    ns::ScrollingTexture::swap(*this, other);
 }
 
 ns::ScrollingTexture::~ScrollingTexture(void)
@@ -25,7 +25,7 @@ ns::ScrollingTexture::~ScrollingTexture(void)
 
 ns::ScrollingTexture& ns::ScrollingTexture::operator=(ns::ScrollingTexture other)
 {
-    swap(*this, other);
+    ns::ScrollingTexture::swap(*this, other);
     return *this;
 }
 #pragma endregion
