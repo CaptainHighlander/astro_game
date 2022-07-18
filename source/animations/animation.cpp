@@ -92,7 +92,7 @@ const std::vector<textures::sp_texture_t>& ns::Animation::get_textures_cref(void
 {
     return this->anim_textures;
 }
-
+#include <iostream>
 float ns::Animation::play(const float delta_time)
 {
     // Update the current frame based on frame rate and delta time
@@ -102,7 +102,10 @@ float ns::Animation::play(const float delta_time)
     const auto animation_duration = this->anim_textures.size();
     while (this->current_frame >= animation_duration)
     {
-        this->current_frame -= static_cast<float>(animation_duration);
+        if (this->looping == true)
+            this->current_frame -= static_cast<float>(animation_duration);  // Loop animation
+        else
+            this->current_frame = animation_duration - 1;  // Do not loop animation
     }    
 
     return this->current_frame;
