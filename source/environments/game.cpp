@@ -1,11 +1,15 @@
 #include "game.hh"
 namespace ns = environments;
 
+#include <components/sprite/sprite_component.hh>
+
 #include <game_objects/game_objects_manager.hh>
 #include <game_objects/game_object.hh>
 
 
+#include <algorithm>
 #include <cassert>
+#include <execution>
 
 
 #pragma region Constructors, destructor and operators:
@@ -25,8 +29,9 @@ ns::Game::~Game(void)
 #pragma region Public overridden methods
 void ns::Game::run(const uint8_t* keyboard_state, const float delta_time, SDL_Renderer& renderer)
 {
-    auto& game_objects_vec = this->game_objects[this->game_objects_index]; 
+    std::vector<components::sprite::sp_sprite_t> sprites_to_draw;
 
+    auto& game_objects_vec = this->game_objects[this->game_objects_index]; 
     while (game_objects_vec.empty() == false)
     {
         auto g_obj = game_objects_vec.back();
@@ -36,12 +41,16 @@ void ns::Game::run(const uint8_t* keyboard_state, const float delta_time, SDL_Re
             g_obj->update(delta_time);
             if (g_obj && g_obj->is_to_erase() == false)
             {
-                g_obj->draw(renderer);
+                auto g_obj_sprite = g_obj->get_sprite_component();
+                if (g_obj_sprite)
+                    sprites_to_draw.push_back(std::move(g_obj_sprite));
                 this->game_objects[(this->game_objects_index % 2) == 0].push_back(std::move(g_obj));
             }
         }
         game_objects_vec.pop_back();
     } 
+    
+    this->draw(renderer, std::move(sprites_to_draw));
 
     // Go to next element of circular vector
     this->game_objects_index += 1;
@@ -79,5 +88,27 @@ void ns::Game::load_data(void)
 	new_ship2->set_position(150.0f, 0.0f);
 	new_ship2->set_scale(3.0f);
     this->game_objects[this->game_objects_index].push_back(new_ship2);
+}
+#pragma endregion
+
+
+#pragma region Private methods
+void ns::Game::draw(SDL_Renderer& renderer, std::vector<components::sprite::sp_sprite_t>&& sprites_to_draw)
+{
+    // Sorting sprites
+    static auto sort_criterium_lamda = [](const components::sprite::sp_sprite_t& s1, const components::sprite::sp_sprite_t& s2) {
+        return *s1 > *s2;
+    };
+    if (sprites_to_draw.size() >= 1000)
+        std::sort(std::execution::par_unseq, sprites_to_draw.begin(), sprites_to_draw.end(), sort_criterium_lamda);
+    else
+        std::sort(std::execution::seq, sprites_to_draw.begin(), sprites_to_draw.end(), sort_criterium_lamda);
+
+    while (sprites_to_draw.empty() == false)
+    {
+        auto& sprite_to_draw = sprites_to_draw.back();
+        sprite_to_draw->draw(renderer);
+        sprites_to_draw.pop_back();
+    }
 }
 #pragma endregion

@@ -40,14 +40,6 @@ void ns::GameObject::add_component(components::sp_component_t component_to_add)
 	this->components.insert(pos, std::move(component_to_add));
 }
 
-void ns::GameObject::draw(SDL_Renderer& renderer) const
-{
-    if (this->sprite)
-    {
-        this->sprite->draw(renderer);
-    }
-}
-
 Vector2 ns::GameObject::get_position(void) const noexcept
 {
     return this->position;
@@ -61,6 +53,11 @@ float ns::GameObject::get_rotation(void) const noexcept
 float ns::GameObject::get_scale(void) const noexcept
 {
     return this->scale;
+}
+
+components::sprite::sp_sprite_t ns::GameObject::get_sprite_component(void) const noexcept
+{
+    return this->sprite;
 }
 
 ns::GameObject::State ns::GameObject::get_state(void) const noexcept

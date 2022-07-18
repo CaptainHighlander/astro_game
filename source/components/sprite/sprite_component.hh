@@ -19,6 +19,8 @@ namespace components
             ~SpriteComponent(void);
 
             SpriteComponent& operator=(const SpriteComponent& other) = delete;
+            bool operator<(const SpriteComponent& other) const noexcept;
+            bool operator>(const SpriteComponent& other) const noexcept;
 
         protected:  // Protected constructors
             SpriteComponent(game_objects::wp_game_object_t&& owner, const components::sprite::draw_order_t _draw_order = 100);

@@ -1,8 +1,11 @@
 #pragma once
 
 
+#include <components/components_typedef.hpp>
 #include <environments/environment.hh>
 #include <game_objects/game_objects_typedef.hpp>
+
+#include <SDL2/SDL_render.h>
 
 #include <vector>
 
@@ -31,5 +34,8 @@ namespace environments
         void add_game_object(const std::string& class_name);
 
         void load_data(void);
+
+    private:  // Private methods
+        void draw(SDL_Renderer& renderer, std::vector<components::sprite::sp_sprite_t>&& sprites_to_draw);
     };
 }

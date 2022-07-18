@@ -6,8 +6,6 @@
 #include <environments/environments_typedef.hpp>
 #include <vector2.hpp>
 
-#include <SDL2/SDL_render.h>
-
 #include <string>
 #include <vector>
 
@@ -69,11 +67,14 @@ namespace game_objects
     public:  // Public methods
         void add_component(components::sp_component_t component_to_add);
 
-        virtual void draw(SDL_Renderer& renderer) const;
-
         [[nodiscard]] Vector2 get_position(void) const noexcept;
+
         [[nodiscard]] float get_rotation(void) const noexcept;
+
         [[nodiscard]] float get_scale(void) const noexcept;
+
+        [[nodiscard]] components::sprite::sp_sprite_t get_sprite_component(void) const noexcept;
+
         [[nodiscard]] State get_state(void) const noexcept;
 
         virtual void handle_keyboard_inputs(const uint8_t* keyboard_state);
@@ -87,6 +88,7 @@ namespace game_objects
         void set_scale(const float scale);
         
         void update(const float delta_time);
+
     protected:  // Protected methods
         void update_components(const float delta_time);
         virtual void update_game_object(const float delta_time);

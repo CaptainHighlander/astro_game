@@ -18,6 +18,16 @@ ns::SpriteComponent::SpriteComponent(game_objects::wp_game_object_t&& owner, con
 ns::SpriteComponent::~SpriteComponent(void)
 {
 }
+
+bool ns::SpriteComponent::operator<(const ns::SpriteComponent& other) const noexcept
+{
+    return this->draw_order < other.draw_order;
+}
+
+bool ns::SpriteComponent::operator>(const ns::SpriteComponent& other) const noexcept
+{
+    return this->draw_order > other.draw_order;
+}
 #pragma endregion
 
 
