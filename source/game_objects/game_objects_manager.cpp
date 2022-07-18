@@ -79,7 +79,7 @@ ns::sp_game_object_t ns::GameObjectsManager::create_game_object(const environmen
         new_game_object = ns::sp_game_object_t{
             new ns::GameObject{ game, class_key }
         };
-        auto bg = components::sprite::ScrollingSpriteComponent::create(new_game_object, 50);
+        auto bg = components::sprite::ScrollingSpriteComponent::create(new_game_object, 150);
         bg->set_screen_size(Vector2(1024.0f, 768.0f));
         std::vector<textures::sp_texture_t> bgtexs{
             textures::TextureManager::load_texture("assets/textures/stars/stars.png"),
