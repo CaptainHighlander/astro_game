@@ -1,10 +1,12 @@
 #include "animated_sprite_component.hh"
 namespace ns = components::sprite;
 
+#include <animations/animation.hh>
+
 
 #pragma region Constructors, destructor and operators
-ns::AnimatedSpriteComponent::AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const ns::draw_order_t draw_oder, const float _anim_fps) :
-    ns::SpriteComponent(std::move(owner), draw_oder), anim_fps(_anim_fps)
+ns::AnimatedSpriteComponent::AnimatedSpriteComponent(game_objects::sp_game_object_t&& owner, const ns::draw_order_t draw_oder) :
+    ns::SpriteComponent(std::move(owner), draw_oder)
 {
 }
 
@@ -15,10 +17,10 @@ ns::AnimatedSpriteComponent::~AnimatedSpriteComponent(void)
 
 
 #pragma region Public static methods
-ns::sp_animated_sprite_t ns::AnimatedSpriteComponent::create(game_objects::sp_game_object_t owner, const ns::draw_order_t draw_oder, const float anim_fps)
+ns::sp_animated_sprite_t ns::AnimatedSpriteComponent::create(game_objects::sp_game_object_t owner, const ns::draw_order_t draw_oder)
 {
 	ns::sp_animated_sprite_t asc{ 
-		new ns::AnimatedSpriteComponent { std::move(owner), draw_oder, anim_fps} 
+		new ns::AnimatedSpriteComponent{ std::move(owner), draw_oder } 
 	};
 	return asc;
 }
@@ -30,44 +32,45 @@ void ns::AnimatedSpriteComponent::update(const float delta_time)
 {
 	this->ns::SpriteComponent::update(delta_time);
 
-	if (this->anim_textures.empty() == false)
+	if (this->current_animation.empty() == false)
 	{
-		// Update the current frame based on frame rate and delta time
-		this->current_frame += this->anim_fps * delta_time;
-		
-		// Wrap current frame if needed
-		while (this->current_frame >= this->anim_textures.size())
-		{
-			this->current_frame -= this->anim_textures.size();
-		}
+		auto& animation_to_play = this->animations.at(current_animation);
+		const auto current_frame = animation_to_play->play(delta_time);
 
 		// Set the current texture
-		this->ns::SpriteComponent::set_texture(this->anim_textures[static_cast<size_t>(this->current_frame)]);
+		this->ns::SpriteComponent::set_texture(animation_to_play->get_texture(static_cast<size_t>(current_frame)));
 	}
 }
 #pragma endregion
 
 
-#pragma region Public methods:
-float ns::AnimatedSpriteComponent::get_anim_fps(void) const noexcept
+#pragma region Public methods
+void ns::AnimatedSpriteComponent::add_animation(animations::up_animation_t&& animation, const bool set_as_to_run)
 {
-    return this->anim_fps;
+	auto animation_name = animation->get_name_view();
+	if (this->animations.contains(animation_name) == false)
+	{
+		this->animations.insert({ std::move(animation_name), std::move(animation) });
+		if (set_as_to_run == true)
+			this->set_current_animation(animation_name.data());
+	}
 }
 
-void ns::AnimatedSpriteComponent::set_anim_fps(float _anim_fps)
+void ns::AnimatedSpriteComponent::set_current_animation(std::string animation_name)
 {
-    this->anim_fps = _anim_fps;
-}
+	auto anim_iterator = this->animations.find(animation_name);
+	if (anim_iterator != this->animations.cend())
+	{
+		auto& animation = anim_iterator->second;
 
-// Set the textures usd for animation
-void ns::AnimatedSpriteComponent::set_animation_textures(std::vector<textures::sp_texture_t> textures)
-{
-    this->anim_textures = std::move(textures);
-    this->current_frame = 0.0f;
-    if (this->anim_textures.empty() == false)
-    {
-        // Set the active texture to first frame
-        this->SpriteComponent::set_texture(this->anim_textures[0]);
-    }
+		// Set current animation
+		this->current_animation = anim_iterator->first;
+
+		// Restart animation
+		animation->restart();
+
+		// Set the active texture to first frame
+        this->SpriteComponent::set_texture(animation->get_texture(0));
+	}
 }
 #pragma endregion

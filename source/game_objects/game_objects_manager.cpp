@@ -2,6 +2,8 @@
 namespace ns = game_objects;
 
 
+#include <animations/animation.hh>
+
 #include <components/sprite/animated_sprite_component.hh>
 #include <components/sprite/scrolling_sprite_component.hh>
 
@@ -47,14 +49,15 @@ ns::sp_game_object_t ns::GameObjectsManager::create_game_object(const environmen
         new_game_object = ns::sp_game_object_t{
             new ns::Ship{ game, class_key }
         };
-        auto asc = components::sprite::AnimatedSpriteComponent::create(new_game_object, 120, 24);
+        auto asc = components::sprite::AnimatedSpriteComponent::create(new_game_object, 200);
         std::vector<textures::sp_texture_t> anims{
             textures::TextureManager::load_texture("assets/textures/ship/ship01.png"),
             textures::TextureManager::load_texture("assets/textures/ship/ship02.png"),
             textures::TextureManager::load_texture("assets/textures/ship/ship03.png"),
             textures::TextureManager::load_texture("assets/textures/ship/ship04.png"),
         };
-        asc->set_animation_textures(std::move(anims));
+        animations::up_animation_t anim{ new animations::Animation{ "idle", 24, true, std::move(anims) } };
+        asc->add_animation(std::move(anim), true);
         new_game_object->sprite = asc;
         new_game_object->add_component(std::move(asc));
     }
